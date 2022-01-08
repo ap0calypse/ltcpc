@@ -93,6 +93,8 @@ sub display_stats {
     $DISP_TEXT = sprintf("%-18s | %8s | %8s | %12s | %4s | %10s\n", 
     "Miner Name", "MH/s", "24h MH/s", "Rewards", "MH/W", "24h +/-");
     for my $KEY (sort keys %{$DATA}) {
+        $DISP_TEXT .= "~ " x 38;
+        $DISP_TEXT .= "\n";
         my $total_hashrate = 0;
         my $total_power = 0;
         my $effective_ratio = 0;
@@ -119,7 +121,7 @@ sub display_stats {
         $DISP_TEXT .= sprintf("%-18s | %13.2f MH/W\n", "EFFECTIVE RATIO", $effective_ratio);
         $DISP_TEXT .= sprintf("%-18s | %13.8f LTC (~%.2f EUR)\n", "EST. 24H REWARDS", 
         ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total);
-        $DISP_TEXT .= sprintf("%-18s | %13.2f EUR\n\n", "DAILY POWER COSTS", $costs_total);
+        $DISP_TEXT .= sprintf("%-18s | %13.2f EUR\n", "DAILY POWER COSTS", $costs_total);
     }
 
     $textview->text($DISP_TEXT);
