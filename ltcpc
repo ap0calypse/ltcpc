@@ -20,11 +20,11 @@ unless (scalar @{$CONFIG{'API_KEYS'}}) {
 }
 
 sub calc_profitability {
-	my $miner = shift;
-	my $rate = shift;
-	my $ratio = 0;
-	$ratio = sprintf("%.2f", ($rate / 1000) / $M2W{$miner});
-	return $ratio;
+    my $miner = shift;
+    my $rate = shift;
+    my $ratio = 0;
+    $ratio = sprintf("%.2f", ($rate / 1000) / $M2W{$miner});
+    return $ratio;
 }
 
 my $cui = Curses::UI->new( -color_support => 1, -clear_on_exit => 1 );
@@ -45,8 +45,8 @@ my $win_main = $cui->add(
         -border => 1,
         -y    => 0,
         -bfg  => 'white',
-				-title => 'ltcpc v0.1 - have fun :)'
-        );
+        -title => 'ltcpc v0.1 - have fun :)'
+);
 my $textview = $win_main->add(
         'textview', 'TextViewer',
         -vscrollbar => 0, -wrapping => 0, -pad => 1,
@@ -57,76 +57,87 @@ my $DATA;
 my $STATS;
 
 sub get_stats {
-				for my $KEY (@{$CONFIG{'API_KEYS'}}) {
-								my $URL = "https://litecoinpool.org/api?api_key=" . $KEY;
-								my $ua = LWP::UserAgent->new(ssl_opts => {verify_hostname => 0});
-								my $js = JSON->new->allow_nonref;
-								my $resp = $ua->get($URL);
-								if ($resp->is_success()) {
-												my $data = $js->decode($resp->decoded_content());
-												for my $w_name (keys %{$data->{'workers'}}) {
-																$DATA->{$KEY}{$w_name}{'hash_rate'} = $data->{'workers'}{$w_name}{'hash_rate'};
-																$DATA->{$KEY}{$w_name}{'hash_rate_24h'} = $data->{'workers'}{$w_name}{'hash_rate_24h'};
-																$DATA->{$KEY}{$w_name}{'rewards'} = $data->{'workers'}{$w_name}{'rewards'};
-																$DATA->{$KEY}{$w_name}{'connected'} = $data->{'workers'}{$w_name}{'connected'};
-												}
-												$STATS->{$KEY}{'paid_rewards'} = $data->{'user'}{'paid_rewards'};
-												$STATS->{$KEY}{'unpaid_rewards'} = $data->{'user'}{'unpaid_rewards'};
-												$STATS->{$KEY}{'past_24h_rewards'} = $data->{'user'}{'past_24h_rewards'};
-												$STATS->{'GLOBAL'}{'network_diff'} = $data->{'network'}{'difficulty'};
-												$STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
-												$STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
-												$win_main->title("ltcpc v0.1 > LTC/EUR " . $data->{'market'}{'ltc_eur'} . " EUR" . " - Pool/Net " . sprintf("%.3f / %.3f TH/s", $data->{'pool'}{'hash_rate'}/1000000000, $data->{'network'}{'hash_rate'}/1000000000) . " - ^q - quit");
+    for my $KEY (@{$CONFIG{'API_KEYS'}}) {
+        my $URL = "https://litecoinpool.org/api?api_key=" . $KEY;
+        my $ua = LWP::UserAgent->new(ssl_opts => {verify_hostname => 0});
+        my $js = JSON->new->allow_nonref;
+        my $resp = $ua->get($URL);
+        if ($resp->is_success()) {
+            my $data = $js->decode($resp->decoded_content());
+            for my $w_name (keys %{$data->{'workers'}}) {
+                $DATA->{$KEY}{$w_name}{'hash_rate'} = $data->{'workers'}{$w_name}{'hash_rate'};
+                $DATA->{$KEY}{$w_name}{'hash_rate_24h'} = $data->{'workers'}{$w_name}{'hash_rate_24h'};
+                $DATA->{$KEY}{$w_name}{'rewards'} = $data->{'workers'}{$w_name}{'rewards'};
+                $DATA->{$KEY}{$w_name}{'connected'} = $data->{'workers'}{$w_name}{'connected'};
+            }
+            $STATS->{$KEY}{'paid_rewards'} = $data->{'user'}{'paid_rewards'};
+            $STATS->{$KEY}{'unpaid_rewards'} = $data->{'user'}{'unpaid_rewards'};
+            $STATS->{$KEY}{'past_24h_rewards'} = $data->{'user'}{'past_24h_rewards'};
+            $STATS->{'GLOBAL'}{'network_diff'} = $data->{'network'}{'difficulty'};
+            $STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
+            $STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
+            $win_main->title("ltcpc v0.1 > LTC/EUR " . $data->{'market'}{'ltc_eur'} . 
+            " EUR" . " - Pool/Net " . 
+            sprintf("%.3f / %.3f TH/s", 
+                $data->{'pool'}{'hash_rate'}/1000000000, 
+                $data->{'network'}{'hash_rate'}/1000000000
+            ) . " - ^q - quit");
 
-								}
-				}
+        }
+    }
 }
 
 sub get_24h_profit {
-				my $hashrate = shift;
-				my $watts = shift;
-				my $power_costs = $CONFIG{'PRICE_KWH'};
-				my $reward = sprintf("%.2f", ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $hashrate * 1000 * 60 * 60 * 24 * $STATS->{'GLOBAL'}{'ltc_eur'});
-				my $costs = $power_costs * ($watts/1000) * 24;
-				return($reward, $costs);
+    my $hashrate = shift;
+    my $watts = shift;
+    my $power_costs = $CONFIG{'PRICE_KWH'};
+    my $reward = sprintf("%.2f", 
+    ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $hashrate * 1000 * 60 * 60 * 24 * $STATS->{'GLOBAL'}{'ltc_eur'});
+    my $costs = $power_costs * ($watts/1000) * 24;
+    return($reward, $costs);
 }
 
 sub display_stats {
-				$DISP_TEXT = sprintf("%-18s | %8s | %8s | %12s | %4s | %10s\n", "Miner Name", "MH/s", "24h MH/s", "Rewards", "MH/W", "24h +/-");
-				for my $KEY (sort keys %{$DATA}) {
-								my $total_hashrate = 0;
-								my $total_power = 0;
-								my $effective_ratio = 0;
-								for my $w (sort keys %{$DATA->{$KEY}}) {
-												if ($DATA->{$KEY}{$w}{'hash_rate'} > 0) {
-																my ($reward, $costs) = &get_24h_profit($DATA->{$KEY}{$w}{'hash_rate'}, $M2W{$w});
-																$DISP_TEXT .= sprintf("%-18s | %8.2f | %8.2f | %12.8f | %4.2f | %+5.2f EUR\n", $w, $DATA->{$KEY}{$w}{'hash_rate'}/1000, $DATA->{$KEY}{$w}{'hash_rate_24h'}/1000, $DATA->{$KEY}{$w}{'rewards'}, &calc_profitability($w, $DATA->{$KEY}{$w}{'hash_rate'}), $reward-$costs);
-																$total_hashrate += $DATA->{$KEY}{$w}{'hash_rate'};
-																$total_power += $M2W{$w};
-												}
-								}
-								$effective_ratio = sprintf("%.2f" , ($total_hashrate / 1000) / $total_power);
-								my ($reward_total, $costs_total) = &get_24h_profit($total_hashrate, $total_power);
-								$DISP_TEXT .= "\n";
-								$DISP_TEXT .= sprintf("%-18s | %13.2f MH/s\n", "TOTAL HASHRATE", $total_hashrate / 1000);
-								$DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL PAID", $STATS->{$KEY}{'paid_rewards'});
-								$DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL UNPAID", $STATS->{$KEY}{'unpaid_rewards'});
-								$DISP_TEXT .= sprintf("%-18s | %13.2f W\n", "TOTAL POWER USAGE", $total_power);
-								$DISP_TEXT .= sprintf("%-18s | %13.2f MH/W\n", "EFFECTIVE RATIO", $effective_ratio);
-								$DISP_TEXT .= sprintf("%-18s | %13.8f LTC (~%.2f EUR)\n", "EST. 24H REWARDS", ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total);
-								$DISP_TEXT .= sprintf("%-18s | %13.2f EUR\n\n", "DAILY POWER COSTS", $costs_total);
-				}
+    $DISP_TEXT = sprintf("%-18s | %8s | %8s | %12s | %4s | %10s\n", 
+    "Miner Name", "MH/s", "24h MH/s", "Rewards", "MH/W", "24h +/-");
+    for my $KEY (sort keys %{$DATA}) {
+        my $total_hashrate = 0;
+        my $total_power = 0;
+        my $effective_ratio = 0;
+        for my $w (sort keys %{$DATA->{$KEY}}) {
+            if ($DATA->{$KEY}{$w}{'hash_rate'} > 0) {
+                my ($reward, $costs) = &get_24h_profit($DATA->{$KEY}{$w}{'hash_rate'}, $M2W{$w});
 
-				$textview->text($DISP_TEXT);
-				$textview->intellidraw();
-				$win_main->intellidraw();
-				$textview->focus();
+                $DISP_TEXT .= sprintf("%-18s | %8.2f | %8.2f | %12.8f | %4.2f | %+5.2f EUR\n", 
+                    $w, $DATA->{$KEY}{$w}{'hash_rate'}/1000, $DATA->{$KEY}{$w}{'hash_rate_24h'}/1000,
+                    $DATA->{$KEY}{$w}{'rewards'}, 
+                    &calc_profitability($w, $DATA->{$KEY}{$w}{'hash_rate'}), $reward-$costs
+                );
+                $total_hashrate += $DATA->{$KEY}{$w}{'hash_rate'};
+                $total_power += $M2W{$w};
+            }
+        }
+        $effective_ratio = sprintf("%.2f" , ($total_hashrate / 1000) / $total_power);
+        my ($reward_total, $costs_total) = &get_24h_profit($total_hashrate, $total_power);
+        $DISP_TEXT .= "\n";
+        $DISP_TEXT .= sprintf("%-18s | %13.2f MH/s\n", "TOTAL HASHRATE", $total_hashrate / 1000);
+        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL PAID", $STATS->{$KEY}{'paid_rewards'});
+        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL UNPAID", $STATS->{$KEY}{'unpaid_rewards'});
+        $DISP_TEXT .= sprintf("%-18s | %13.2f W\n", "TOTAL POWER USAGE", $total_power);
+        $DISP_TEXT .= sprintf("%-18s | %13.2f MH/W\n", "EFFECTIVE RATIO", $effective_ratio);
+        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC (~%.2f EUR)\n", "EST. 24H REWARDS", 
+        ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total);
+        $DISP_TEXT .= sprintf("%-18s | %13.2f EUR\n\n", "DAILY POWER COSTS", $costs_total);
+    }
+
+    $textview->text($DISP_TEXT);
+    $textview->intellidraw();
+    $win_main->intellidraw();
+    $textview->focus();
 
 }
-        
-
 $SIG{ALRM} = sub {
-		my $alarm_val = $CONFIG{'REFRESH'} || 30;
+    my $alarm_val = $CONFIG{'REFRESH'} || 30;
     &get_stats();
     &display_stats();
     alarm($alarm_val);
