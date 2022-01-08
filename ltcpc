@@ -76,7 +76,7 @@ sub get_stats {
 												$STATS->{'GLOBAL'}{'network_diff'} = $data->{'network'}{'difficulty'};
 												$STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
 												$STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
-												$win_main->title("ltcpc v0.1 > LTC/EUR " . $data->{'market'}{'ltc_eur'} . " EUR" . " - Pool/Net " . sprintf("%.3f / %.3f TH/s", $data->{'pool'}{'hash_rate'}/1000000000, $data->{'network'}{'hash_rate'}/1000000000));
+												$win_main->title("ltcpc v0.1 > LTC/EUR " . $data->{'market'}{'ltc_eur'} . " EUR" . " - Pool/Net " . sprintf("%.3f / %.3f TH/s", $data->{'pool'}{'hash_rate'}/1000000000, $data->{'network'}{'hash_rate'}/1000000000) . " - ^q - quit");
 
 								}
 				}
