@@ -4,7 +4,6 @@ use warnings;
 use Curses::UI;
 use JSON;
 use LWP::UserAgent;
-use Term::ANSIColor qw/colored/;
 use lib './conf/';
 use ltcpcconf;
 
@@ -45,7 +44,7 @@ my $win_main = $cui->add(
         -border => 1,
         -y    => 0,
         -bfg  => 'white',
-        -title => 'ltcpc v0.1 - have fun :)'
+        -title => 'ltcpc - have fun :)'
 );
 my $textview = $win_main->add(
         'textview', 'TextViewer',
@@ -76,7 +75,7 @@ sub get_stats {
             $STATS->{'GLOBAL'}{'network_diff'} = $data->{'network'}{'difficulty'};
             $STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
             $STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
-            $win_main->title("ltcpc v0.1 > LTC/EUR " . $data->{'market'}{'ltc_eur'} . 
+            $win_main->title("ltcpc > LTC/EUR " . $data->{'market'}{'ltc_eur'} . 
             " EUR" . " - Pool/Net " . 
             sprintf("%.3f / %.3f TH/s", 
                 $data->{'pool'}{'hash_rate'}/1000000000, 
