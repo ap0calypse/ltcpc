@@ -37,7 +37,7 @@ my $win_main = $cui->add(
         -border => 1,
         -y    => 0,
         -bfg  => 'white',
-        -title => 'ltcpc - have fun :)'
+        -title => 'ltcpc - a litecoinpool.org CLI - have fun :)'
 );
 my $textview = $win_main->add(
         'textview', 'TextViewer',
@@ -70,10 +70,10 @@ sub get_stats {
             $STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
             $win_main->title("ltcpc > LTC/EUR " . $data->{'market'}{'ltc_eur'} . 
             " EUR" . " > Pool/Net " . 
-            sprintf("%.3f / %.3f TH/s", 
+            sprintf("%.2f / %.2f TH/s", 
                 $data->{'pool'}{'hash_rate'}/1000000000, 
                 $data->{'network'}{'hash_rate'}/1000000000
-            ) . " > ^q - quit");
+            ) . " > PPS: " . $STATS->{'GLOBAL'}{'pps_ratio'});
 
         }
     }
