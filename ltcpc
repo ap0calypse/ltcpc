@@ -69,11 +69,11 @@ sub get_stats {
             $STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
             $STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
             $win_main->title("ltcpc > LTC/EUR " . $data->{'market'}{'ltc_eur'} . 
-            " EUR" . " - Pool/Net " . 
+            " EUR" . " > Pool/Net " . 
             sprintf("%.3f / %.3f TH/s", 
                 $data->{'pool'}{'hash_rate'}/1000000000, 
                 $data->{'network'}{'hash_rate'}/1000000000
-            ) . " - ^q - quit");
+            ) . " > ^q - quit");
 
         }
     }
