@@ -1,6 +1,13 @@
 ltcpc - a litecoinpool.org CLI
 - - - - - - - - - - - - - - - -
 
+To work, ltcpc depends on some Perl Modules. Here is a list of modules used and the corresponding
+packages for various distributions:
+
+ - Curses::UI       (arch: perl-curses-ui, debian: libcurses-ui-perl)
+ - JSON             (arch: perl-json, debian: libjson-perl)
+ - LWP::UserAgent   (arch: perl-libwww, debian: libwww-perl)
+
 This script shows mining stats along with the profit ratios and power usage. To accomplish this,
 it needs proper configuration.
 
