@@ -69,13 +69,14 @@ sub get_stats {
             $STATS->{'GLOBAL'}{'network_diff'} = $data->{'network'}{'difficulty'};
             $STATS->{'GLOBAL'}{'pps_ratio'} = $data->{'pool'}{'pps_ratio'};
             $STATS->{'GLOBAL'}{'ltc_eur'} = $data->{'market'}{'ltc_eur'};
+            my $power_costs = $CONFIG{'PRICE_KWH'};
             $win_main->title("ltcpc > " . $data->{'market'}{'ltc_eur'} . 
-            " EUR" . " > Pool/Net " . 
+            " EUR" . " > " . 
             sprintf("%.2f/%.2f TH/s", 
                 $data->{'pool'}{'hash_rate'}/1000000000, 
                 $data->{'network'}{'hash_rate'}/1000000000
-            ) . " > PPS " . $STATS->{'GLOBAL'}{'pps_ratio'} . " > DIFF " . 
-            sprintf("%.2fM", $STATS->{'GLOBAL'}{'network_diff'} / 1000000));
+            ) . " > PPS " . $STATS->{'GLOBAL'}{'pps_ratio'} . " > D " . 
+            sprintf("%.2fM", $STATS->{'GLOBAL'}{'network_diff'} / 1000000) . " > $power_costs EUR/kWh");
 
         }
     }
@@ -93,12 +94,13 @@ sub get_24h_profit {
 
 sub display_stats {
     $DISP_TEXT = sprintf("%-18s | %8s | %8s | %12s | %4s | %10s\n", 
-    "Miner Name", "MH/s", "24h MH/s", "Rewards", "MH/W", "24h +/-");
+    "Miner Name", "MH/s", "24h MH/s", "REWARDS", "MH/W", "24h PROFIT");
     for my $KEY (sort keys %{$DATA}) {
-        $DISP_TEXT .= "~ " x 38;
+        $DISP_TEXT .= "--" x 38;
         $DISP_TEXT .= "\n";
         my $total_hashrate = 0;
         my $total_power = 0;
+        my $total_profit = 0;
         my $effective_ratio = 0;
         for my $w (sort keys %{$DATA->{$KEY}}) {
             if ($DATA->{$KEY}{$w}{'hash_rate'} > 0) {
@@ -109,21 +111,18 @@ sub display_stats {
                     $DATA->{$KEY}{$w}{'rewards'}, 
                     &calc_profitability($w, $DATA->{$KEY}{$w}{'hash_rate'}), $reward-$costs
                 );
+                $total_profit += $reward-$costs;
                 $total_hashrate += $DATA->{$KEY}{$w}{'hash_rate'};
                 $total_power += $M2W{$w};
             }
         }
         $effective_ratio = sprintf("%.2f" , ($total_hashrate / 1000) / $total_power);
         my ($reward_total, $costs_total) = &get_24h_profit($total_hashrate, $total_power);
-        $DISP_TEXT .= "\n";
-        $DISP_TEXT .= sprintf("%-18s | %13.2f MH/s\n", "TOTAL HASHRATE", $total_hashrate / 1000);
-        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL PAID", $STATS->{$KEY}{'paid_rewards'});
-        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC\n", "TOTAL UNPAID", $STATS->{$KEY}{'unpaid_rewards'});
-        $DISP_TEXT .= sprintf("%-18s | %13.2f W\n", "TOTAL POWER USAGE", $total_power);
-        $DISP_TEXT .= sprintf("%-18s | %13.2f MH/W\n", "EFFECTIVE RATIO", $effective_ratio);
-        $DISP_TEXT .= sprintf("%-18s | %13.8f LTC (~%.2f EUR)\n", "EST. 24H REWARDS", 
-        ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total);
-        $DISP_TEXT .= sprintf("%-18s | %13.2f EUR\n", "DAILY POWER COSTS", $costs_total);
+        $DISP_TEXT .= sprintf("%-18s | %8.2f | %8s | %12s | %4.2f | %+5.2f EUR\n\n", 
+        "TOTAL", $total_hashrate / 1000, "", "", $effective_ratio, $total_profit);
+        $DISP_TEXT .= sprintf("%-18s | %-.8f / %-.8f LTC\n", "PAID / UNPAID", $STATS->{$KEY}{'paid_rewards'}, $STATS->{$KEY}{'unpaid_rewards'});
+        $DISP_TEXT .= sprintf("%-18s | %-.8f LTC (~%.2f EUR) / %.2f kWh (~%.2f EUR)\n", "REWARD / COST 24h", 
+        ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total, $total_power/1000*24, $costs_total);
     }
 
     $textview->text($DISP_TEXT);
