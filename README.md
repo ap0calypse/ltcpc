@@ -15,7 +15,7 @@ it needs proper configuration.
 
 In order to use this script, copy the sample config to conf/ltcpcconf.pm and adapt to your needs.
 A minimal configuration would look like this:
-
+~~~
 #!/usr/bin/perl
 {
     package ltcpcconf;
@@ -43,7 +43,7 @@ A minimal configuration would look like this:
     );
 }
 1;
-
+~~~
 Donations are welcome :)
 
 - LTC - LcWms1wddhRKWyE7JDSxZcY6gZTGTAttXG
