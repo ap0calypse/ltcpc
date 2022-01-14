@@ -16,8 +16,6 @@ it needs proper configuration.
 In order to use this script, copy the sample config to conf/ltcpcconf.pm and adapt to your needs.
 A minimal configuration would look like this:
 
- - - - - - - - - - - COPY BELOW THIS LINE - - - - - - - - 
-
 #!/usr/bin/perl
 {
     package ltcpcconf;
@@ -46,10 +44,8 @@ A minimal configuration would look like this:
 }
 1;
 
-- - - - - - - - - - - - - - COPY ABOVE THIS LINE - - - - - - - - - 
-
 Donations are welcome :)
 
-LTC - LcWms1wddhRKWyE7JDSxZcY6gZTGTAttXG
-BTC - bc1qkggktuhhdms2ue6c04archpvc6h4pqfeu25y3h
-DOGE - DRpqNpcfAidAFmkLzaLoB6gVrRgKzNtiRC
+- LTC - LcWms1wddhRKWyE7JDSxZcY6gZTGTAttXG
+- BTC - bc1qkggktuhhdms2ue6c04archpvc6h4pqfeu25y3h
+- DOGE - DRpqNpcfAidAFmkLzaLoB6gVrRgKzNtiRC
