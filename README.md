@@ -1,5 +1,7 @@
 ltcpc - a litecoinpool.org CLI
-- - - - - - - - - - - - - - - -
+------------------------------
+![screenshot ltcpc](screenshot.png "Screenshot")
+
 
 To work, ltcpc depends on some Perl Modules. Here is a list of modules used and the corresponding
 packages for various distributions:
