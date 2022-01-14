@@ -21,7 +21,7 @@ A minimal configuration would look like this:
     package ltcpcconf;
     use Exporter;
     our @ISA = ('Exporter');
-    our @EXPORT = qw/%MINERS %CONFIG/;
+    our @EXPORT = qw/%M2W %CONFIG/;
 
     our %CONFIG = (
             'API_KEYS' => [
