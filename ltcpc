@@ -118,8 +118,8 @@ sub display_stats {
         }
         $effective_ratio = sprintf("%.2f" , ($total_hashrate / 1000) / $total_power);
         my ($reward_total, $costs_total) = &get_24h_profit($total_hashrate, $total_power);
-        $DISP_TEXT .= sprintf("%-18s | %8.2f | %8s | %12s | %4.2f | %+5.2f EUR\n\n", 
-        "TOTAL", $total_hashrate / 1000, "", "", $effective_ratio, $total_profit);
+        $DISP_TEXT .= sprintf("%-18s | %8.2f | %6d W | %12s | %4.2f | %+5.2f EUR\n\n", 
+        "TOTAL", $total_hashrate / 1000, $total_power, "", $effective_ratio, $total_profit);
         $DISP_TEXT .= sprintf("%-18s | %-.8f / %-.8f LTC\n", "PAID / UNPAID", $STATS->{$KEY}{'paid_rewards'}, $STATS->{$KEY}{'unpaid_rewards'});
         $DISP_TEXT .= sprintf("%-18s | %-.8f LTC (~%.2f EUR) / %.2f kWh (~%.2f EUR)\n", "REWARD / COST 24h", 
         ((12.5 * $STATS->{'GLOBAL'}{'pps_ratio'}) / ($STATS->{'GLOBAL'}{'network_diff'} * 2 ** 32)) * $total_hashrate * 1000 * 60 * 60 * 24, $reward_total, $total_power/1000*24, $costs_total);
