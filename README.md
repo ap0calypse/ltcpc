@@ -1,4 +1,4 @@
-ltcpc - a litecoinpool.org CLI
+ltcpc - a litecoinpool.org CUI
 ------------------------------
 ![screenshot ltcpc](screenshot.png "Screenshot")
 

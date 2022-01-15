@@ -38,7 +38,7 @@ my $win_main = $cui->add(
         -border => 1,
         -y    => 0,
         -bfg  => 'white',
-        -title => 'ltcpc - a litecoinpool.org CLI - have fun :)'
+        -title => 'ltcpc - a litecoinpool.org CUI - have fun :)'
 );
 my $textview = $win_main->add(
         'textview', 'TextViewer',
