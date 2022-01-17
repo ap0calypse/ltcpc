@@ -96,7 +96,7 @@ sub display_stats {
     $DISP_TEXT = sprintf("%-18s | %8s | %8s | %12s | %4s | %10s\n", 
     "Miner Name", "MH/s", "24h MH/s", "REWARDS", "MH/W", "24h PROFIT");
     for my $KEY (sort keys %{$DATA}) {
-        $DISP_TEXT .= "--" x 38;
+        $DISP_TEXT .= "-" x 75;
         $DISP_TEXT .= "\n";
         my $total_hashrate = 0;
         my $total_power = 0;
