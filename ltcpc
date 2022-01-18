@@ -23,7 +23,12 @@ sub calc_profitability {
     my $miner = shift;
     my $rate = shift;
     my $ratio = 0;
-    $ratio = sprintf("%.2f", ($rate / 1000) / $M2W{$miner});
+    if ($M2W{$miner} == 0) { # free power miner :)
+        $ratio = "INF";
+    }
+    else {
+        $ratio = sprintf("%.2f", ($rate / 1000) / $M2W{$miner});
+    }
     return $ratio;
 }
 
